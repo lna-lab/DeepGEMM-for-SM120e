@@ -1,0 +1,10 @@
+upstream_ref/
+.venv/
+__pycache__/
+*.pyc
+*.so
+*.o
+.cache/
+build/
+dist/
+*.egg-info/
