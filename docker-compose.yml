@@ -1,0 +1,28 @@
+# DeepGEMM-for-SM120e development container
+# Uses GPU 0 only, leaves GPU 1-6 for DFlash collection
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: deepgemm-dev
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+    volumes:
+      # Mount project source for live editing
+      - .:/workspace/DeepGEMM-for-SM120e
+      # Mount upstream ref
+      - ./upstream_ref:/opt/deepgemm-upstream:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]
+    shm_size: '16gb'
+    stdin_open: true
+    tty: true
+    command: /bin/bash

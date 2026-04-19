@@ -30,8 +30,8 @@ if torch.cuda.is_available():
     print(f'Compute capability: {cc[0]}.{cc[1]}')
     print(f'SM class: sm_{cc[0]*10 + cc[1]}')
     props = torch.cuda.get_device_properties(0)
-    print(f'Shared memory / block: {props.max_shared_memory_per_block} bytes')
-    print(f'Total memory: {props.total_mem / 1e9:.1f} GB')
+    print(f'Shared memory / block: {props.shared_memory_per_block} bytes')
+    print(f'Total memory: {props.total_memory / 1e9:.1f} GB')
 " 2>&1
 
 echo ""

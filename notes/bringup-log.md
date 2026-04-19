@@ -23,3 +23,36 @@
 2. Run `scripts/test_sm120e_env.sh` to verify environment
 3. Study `deep_gemm/impls/` for shared memory and barrier patterns
 4. Start with `fp8_gemm_nt` kernel port
+
+## 2026-04-19 — Environment verification complete
+
+### test_sm120e_env.sh results
+```
+GPU:              RTX PRO 6000 Blackwell (SM120, compute 12.0)
+Shared memory:    49,152 bytes (48 KB)
+VRAM:             102 GB
+PyTorch:          2.11.0+cu130
+CUTLASS:          found
+FP8 E4M3:        supported
+nvcc:             not found (CUDA toolkit not installed system-wide)
+Driver:           580.126.09
+```
+
+### GPU allocation
+- GPU 0: dedicated to DeepGEMM development (96 GB free)
+- GPU 1-6: DFlash hidden state collection running (6 workers, ~1,500 samples collected)
+
+### Observations
+- `shared_memory_per_block = 49,152` confirms the 49 KB constraint documented in compatibility.md
+- FP8 E4M3 tensor creation works — tensor core path should be functional
+- CUTLASS is available — can use as reference or fallback
+- nvcc missing — DeepGEMM JIT uses NVRTC as alternative, may be sufficient
+
+### Issues found
+- PyTorch API: `props.max_shared_memory_per_block` → `props.shared_memory_per_block` (fixed)
+- PyTorch API: `props.total_mem` → `props.total_memory` (fixed)
+
+### Next
+- Clone upstream DeepGEMM and study kernel code
+- Check if NVRTC path works without nvcc
+- Identify all tcgen05.fence locations in upstream
